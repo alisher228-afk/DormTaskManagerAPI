@@ -1,4 +1,4 @@
-package org.example.dormtaskmanagerapi.controller;
+package org.example.dormtaskmanagerapi.presentation.controller;
 
 import org.example.dormtaskmanagerapi.entity.Task;
 import org.example.dormtaskmanagerapi.service.TaskService;
@@ -30,5 +30,9 @@ public class TaskController {
     @DeleteMapping("/delete/{id}")
     public Task deleteTaskById(@PathVariable Long id) {
         return taskService.deleteTaskById(id);
+    }
+    @PutMapping("/complete/{id}")
+    public Task ApproveTask(@PathVariable Long id) {
+        return taskService.ApproveTask(id);
     }
 }

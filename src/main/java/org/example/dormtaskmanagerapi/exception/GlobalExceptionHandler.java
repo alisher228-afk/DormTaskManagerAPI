@@ -22,7 +22,6 @@ public class GlobalExceptionHandler {
                 ));
     }
     @ExceptionHandler({
-            IllegalStateException.class,
             MethodArgumentNotValidException.class
     })
     public ResponseEntity<ExMessage> handleException(Exception ex) {

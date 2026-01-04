@@ -1,5 +1,6 @@
-package org.example.dormtaskmanagerapi.controller;
+package org.example.dormtaskmanagerapi.presentation.controller;
 
+import org.example.dormtaskmanagerapi.Dto.RoomResponse;
 import org.example.dormtaskmanagerapi.entity.Room;
 import org.example.dormtaskmanagerapi.service.RoomService;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class RoomController {
     }
 
     @GetMapping("/{id}")
-    public Room getRoomById(@PathVariable Long id) {
+    public RoomResponse getRoomById(@PathVariable Long id) {
         return roomService.getRoomById(id);
     }
 

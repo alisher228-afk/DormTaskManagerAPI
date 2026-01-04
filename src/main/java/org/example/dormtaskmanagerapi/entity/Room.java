@@ -2,6 +2,8 @@ package org.example.dormtaskmanagerapi.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "rooms")
 public class Room {
@@ -10,6 +12,8 @@ public class Room {
     private Long id;
     @Column(name = "name")
     private String name;
+    @OneToMany(mappedBy = "room" , fetch = FetchType.LAZY)
+    private List<User> users;
 
     public Room(Long id, String name) {
         this.id = id;

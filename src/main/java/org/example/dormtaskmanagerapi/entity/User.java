@@ -11,8 +11,8 @@ public class User {
     private Long id;
     @Column(name = "name")
     private String name;
-    @JoinColumn(name = "room")
-    @ManyToOne
+    @JoinColumn(name = "room_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Room room;
     public User() {
     }

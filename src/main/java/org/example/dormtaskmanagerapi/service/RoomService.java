@@ -1,6 +1,8 @@
 package org.example.dormtaskmanagerapi.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.example.dormtaskmanagerapi.Dto.RoomResponse;
+import org.example.dormtaskmanagerapi.Dto.UserShortResponse;
 import org.example.dormtaskmanagerapi.entity.Room;
 import org.example.dormtaskmanagerapi.entity.repository.RoomRepository;
 import org.example.dormtaskmanagerapi.entity.repository.TaskRepository;
@@ -35,18 +37,23 @@ public class RoomService {
         log.info("Getting all rooms");
         List<Room> rooms = roomRepository.findAll();
         if (rooms.isEmpty()) {
-            throw new IllegalStateException("Room List is empty");
+            throw new EntityNotFoundException("Room List is empty");
         }
-        return  rooms;
+        return rooms;
+        
     }
+    public RoomResponse getRoomById(Long id) {
+        Room room = roomRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Room not found"));
 
-    public Room getRoomById(Long id) {
-        log.info("Getting room by id {}", id);
-        Room room = roomRepository.findById( id)
-                .orElseThrow(()->new EntityNotFoundException("Room with id " + id + " not found"));
-        return room;
+        List<UserShortResponse> users = userRepository.findByRoomId(id)
+                .stream()
+                .map(u -> new UserShortResponse(u.getId(), u.getName()))
+                .toList();
+
+        return new RoomResponse(room.getId(), room.getName(), users);
     }
-
+    
     public Room deleteRoomById(Long id) {
         log.info("Deleting room by id {}", id);
         Room room = roomRepository.findById( id)

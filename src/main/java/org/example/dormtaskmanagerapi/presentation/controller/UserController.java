@@ -1,4 +1,4 @@
-package org.example.dormtaskmanagerapi.controller;
+package org.example.dormtaskmanagerapi.presentation.controller;
 
 import org.example.dormtaskmanagerapi.entity.User;
 import org.example.dormtaskmanagerapi.service.UserService;

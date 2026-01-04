@@ -25,9 +25,8 @@ public class TaskService {
     }
 
     public Task getTaskById(Long id) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task with id " + id + " not found"));
-        return task;
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Task with id " + id + " not found"));
     }
     public List<Task> getAllTasks() {
         List<Task> tasks = taskRepository.findAll();
@@ -45,7 +44,7 @@ public class TaskService {
                 .orElseThrow(() -> new EntityNotFoundException("Room not found"));
 
         if (!user.getRoom().getId().equals(room.getId())) {
-            throw new IllegalArgumentException("User does not belong to the specified room");
+            throw new IllegalStateException("User does not belong to the specified room");
         }
 
         if (task.getStatus() == null) {
@@ -68,6 +67,17 @@ public class TaskService {
                 .orElseThrow(() -> new EntityNotFoundException("Task with id " + id + " not found"));
         taskRepository.delete(task);
         return task;
+    }
+
+    public Task ApproveTask(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Task with id " + id + " not found"));
+        if (task.getStatus() == Status.COMPLETED) {
+            throw new IllegalStateException("Task is already completed");
+        }
+        task.setStatus(Status.COMPLETED);
+        return taskRepository.save(task);
+
     }
 
 }
