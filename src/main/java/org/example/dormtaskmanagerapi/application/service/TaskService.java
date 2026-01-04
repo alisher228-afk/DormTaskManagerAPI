@@ -1,4 +1,4 @@
-package org.example.dormtaskmanagerapi.service;
+package org.example.dormtaskmanagerapi.application.service;
 
 
 import jakarta.persistence.EntityNotFoundException;
@@ -6,10 +6,12 @@ import org.example.dormtaskmanagerapi.entity.*;
 import org.example.dormtaskmanagerapi.entity.repository.RoomRepository;
 import org.example.dormtaskmanagerapi.entity.repository.TaskRepository;
 import org.example.dormtaskmanagerapi.entity.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
+@SuppressWarnings("NullableProblems")
 @Service
 public class TaskService {
 
@@ -28,12 +30,9 @@ public class TaskService {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Task with id " + id + " not found"));
     }
-    public List<Task> getAllTasks() {
-        List<Task> tasks = taskRepository.findAll();
-        if (tasks.isEmpty()) {
-            throw new EntityNotFoundException("Task not found");
-        }
-        return tasks;
+    public Page<Task> getAllTasks(int page, int size) {
+        Pageable pageable =  PageRequest.of(page, size);
+        return taskRepository.findAll(pageable);
     }
     public Task createTask(Task task) {
 

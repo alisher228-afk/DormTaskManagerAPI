@@ -1,18 +1,25 @@
-package org.example.dormtaskmanagerapi.service;
+package org.example.dormtaskmanagerapi.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.example.dormtaskmanagerapi.Dto.RoomResponse;
-import org.example.dormtaskmanagerapi.Dto.UserShortResponse;
+import org.example.dormtaskmanagerapi.application.Dto.RoomResponses.RoomListResponse;
+import org.example.dormtaskmanagerapi.application.Dto.RoomResponses.RoomDetailResponse;
+import org.example.dormtaskmanagerapi.application.Dto.UserResponses.UserShortResponse;
+import org.example.dormtaskmanagerapi.application.mapper.RoomMapper;
 import org.example.dormtaskmanagerapi.entity.Room;
 import org.example.dormtaskmanagerapi.entity.repository.RoomRepository;
 import org.example.dormtaskmanagerapi.entity.repository.TaskRepository;
 import org.example.dormtaskmanagerapi.entity.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@SuppressWarnings("NullableProblems")
 @Service
 public class RoomService {
 
@@ -21,11 +28,13 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
+    private final RoomMapper roomMapper;
 
-    public RoomService(RoomRepository roomRepository, UserRepository userRepository, TaskRepository taskRepository) {
+    public RoomService(RoomRepository roomRepository, UserRepository userRepository, TaskRepository taskRepository, RoomMapper roomMapper) {
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
+        this.roomMapper = roomMapper;
     }
 
     public Room createRoom(Room room) {
@@ -33,25 +42,20 @@ public class RoomService {
         roomRepository.save(room);
         return room;
     }
-    public List<Room> getAllRooms() {
+    public Page<RoomListResponse> getAllRooms(int page, int size) {
         log.info("Getting all rooms");
-        List<Room> rooms = roomRepository.findAll();
-        if (rooms.isEmpty()) {
-            throw new EntityNotFoundException("Room List is empty");
-        }
-        return rooms;
-        
+        Pageable pageable =  PageRequest.of(page, size , Sort.by(Sort.Direction.ASC, "name"));
+        return roomRepository.findAll(pageable)
+                .map(roomMapper::toRoomListResponse);
     }
-    public RoomResponse getRoomById(Long id) {
+    public RoomDetailResponse getRoomById(Long id) {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Room not found"));
-
-        List<UserShortResponse> users = userRepository.findByRoomId(id)
+        List<UserShortResponse> user = userRepository.findByRoomId(id)
                 .stream()
-                .map(u -> new UserShortResponse(u.getId(), u.getName()))
+                .map(user1 -> new UserShortResponse(user1.getId(),user1.getName()))
                 .toList();
-
-        return new RoomResponse(room.getId(), room.getName(), users);
+        return new RoomDetailResponse(room.getId(), room.getName() , user);
     }
     
     public Room deleteRoomById(Long id) {

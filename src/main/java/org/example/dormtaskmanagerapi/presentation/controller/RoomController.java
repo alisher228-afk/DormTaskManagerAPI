@@ -1,12 +1,13 @@
 package org.example.dormtaskmanagerapi.presentation.controller;
 
-import org.example.dormtaskmanagerapi.Dto.RoomResponse;
+import org.example.dormtaskmanagerapi.application.Dto.RoomResponses.RoomListResponse;
+import org.example.dormtaskmanagerapi.application.Dto.RoomResponses.RoomDetailResponse;
 import org.example.dormtaskmanagerapi.entity.Room;
-import org.example.dormtaskmanagerapi.service.RoomService;
+import org.example.dormtaskmanagerapi.application.service.RoomService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@SuppressWarnings("NullableProblems")
 @RequestMapping("/room")
 @RestController
 public class RoomController {
@@ -22,13 +23,17 @@ public class RoomController {
         return roomService.createRoom(room);
     }
 
+
     @GetMapping
-    public List<Room> getAllRooms() {
-        return roomService.getAllRooms();
+    public Page<RoomListResponse> getAllRooms(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size)
+    {
+        return roomService.getAllRooms(page, size);
     }
 
     @GetMapping("/{id}")
-    public RoomResponse getRoomById(@PathVariable Long id) {
+    public RoomDetailResponse getRoomById(@PathVariable Long id) {
         return roomService.getRoomById(id);
     }
 

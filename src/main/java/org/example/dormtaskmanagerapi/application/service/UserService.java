@@ -1,15 +1,19 @@
-package org.example.dormtaskmanagerapi.service;
+package org.example.dormtaskmanagerapi.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.example.dormtaskmanagerapi.application.Dto.UserResponses.UserListResponse;
 import org.example.dormtaskmanagerapi.entity.User;
 import org.example.dormtaskmanagerapi.entity.repository.TaskRepository;
 import org.example.dormtaskmanagerapi.entity.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
+@SuppressWarnings("NullableProblems")
 @Service
 public class UserService {
     public static final Logger log = LoggerFactory.getLogger(UserService.class);
@@ -28,9 +32,11 @@ public class UserService {
         return user;
     }
 
-    public List<User> getUsers() {
+    public Page<UserListResponse> getUsers(int page, int size) {
         log.info("Getting users");
-        return userRepository.findAll();
+        Pageable pageable =  PageRequest.of(page, size , Sort.by(Sort.Direction.ASC, "name"));
+        return userRepository.findAll(pageable)
+                .map(user -> new UserListResponse(user.getId(),user.getName(),user.getRoom()));
     }
     public User getUserById(Long id) {
         log.info("Getting user by id {}", id);

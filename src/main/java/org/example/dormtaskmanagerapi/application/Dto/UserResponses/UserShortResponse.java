@@ -1,4 +1,4 @@
-package org.example.dormtaskmanagerapi.Dto;
+package org.example.dormtaskmanagerapi.application.Dto.UserResponses;
 
 public record UserShortResponse(
         Long id,

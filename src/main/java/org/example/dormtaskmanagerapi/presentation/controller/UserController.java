@@ -1,11 +1,12 @@
 package org.example.dormtaskmanagerapi.presentation.controller;
 
+import org.example.dormtaskmanagerapi.application.Dto.UserResponses.UserListResponse;
 import org.example.dormtaskmanagerapi.entity.User;
-import org.example.dormtaskmanagerapi.service.UserService;
+import org.example.dormtaskmanagerapi.application.service.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@SuppressWarnings("NullableProblems")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -20,8 +21,8 @@ public class UserController {
         return userService.createUsers(user);
     }
     @GetMapping
-    public List<User> getUsers() {
-        return userService.getUsers();
+    public Page<UserListResponse> getUsers(@RequestParam int page, @RequestParam int size) {
+        return userService.getUsers(page, size);
     }
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
